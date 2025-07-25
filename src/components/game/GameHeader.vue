@@ -10,16 +10,7 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <GameControls
-          :is-generating="isGenerating ?? false"
-          :is-racing="isRacing ?? false"
-          :is-paused="isPaused ?? false"
-          :has-horses="hasHorses ?? false"
-          :has-schedule="hasSchedule ?? false"
-          @generate-game="$emit('generate-game')"
-          @toggle-race="$emit('toggle-race')"
-          @reset-game="$emit('reset-game')"
-        />
+        <GameControls />
         <ThemeToggle />
       </div>
     </div>
@@ -29,22 +20,4 @@
 <script setup lang="ts">
   import GameControls from "@/components/game/GameControls.vue";
   import ThemeToggle from "@/components/ui/ThemeToggle.vue";
-
-  interface GameHeaderProps {
-    isGenerating?: boolean;
-    isRacing?: boolean;
-    isPaused?: boolean;
-    hasHorses?: boolean;
-    hasSchedule?: boolean;
-  }
-
-  interface GameHeaderEmits {
-    (event: "generate-game"): void;
-    (event: "toggle-race"): void;
-    (event: "reset-game"): void;
-  }
-
-  defineProps<GameHeaderProps>();
-
-  defineEmits<GameHeaderEmits>();
 </script>

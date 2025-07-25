@@ -4,31 +4,31 @@
       <BaseButton
         variant="primary"
         size="md"
-        :loading="props.isGenerating"
-        :disabled="props.isRacing || props.isPaused"
-        @click="$emit('generate-game')"
+        :loading="isGenerating"
+        :disabled="isRacing || isPaused"
+        @click="generateGame"
       >
         <span class="flex items-center space-x-2">
           <span>{{
-            props.hasHorses && props.hasSchedule ? "Regenerate" : "Generate"
+            hasHorses && hasSchedule ? "Regenerate" : "Generate"
           }}
             Program</span>
         </span>
       </BaseButton>
 
       <BaseButton
-        :variant="props.isRacing && !props.isPaused ? 'warning' : 'success'"
+        :variant="isRacing && !isPaused ? 'warning' : 'success'"
         size="md"
-        :loading="props.isRacing && !props.isPaused"
-        :disabled="!props.hasSchedule"
-        @click="$emit('toggle-race')"
+        :loading="isRacing && !isPaused"
+        :disabled="!hasSchedule || isGenerating"
+        @click="toggleRace"
       >
         <span class="flex items-center space-x-2">
           <span>
             {{
-              !props.isRacing
+              !isRacing
                 ? "Start Racing"
-                : props.isPaused
+                : isPaused
                   ? "Resume Race"
                   : "Pause Race"
             }}
@@ -39,8 +39,8 @@
       <BaseButton
         variant="secondary"
         size="md"
-        :disabled="!props.hasSchedule"
-        @click="$emit('reset-game')"
+        :disabled="!hasSchedule"
+        @click="resetGame"
       >
         <span class="flex items-center space-x-2">
           <span>Reset Game</span>
@@ -52,22 +52,25 @@
 
 <script setup lang="ts">
   import BaseButton from "@/components/ui/BaseButton.vue";
+  import { useHorseRacingStore } from "@/stores/horse-racing";
+  import { storeToRefs } from "pinia";
+  import { computed } from "vue";
 
-  interface GameControlsProps {
-    isGenerating: boolean;
-    isRacing: boolean;
-    isPaused?: boolean;
-    hasHorses: boolean;
-    hasSchedule: boolean;
-  }
+  const store = useHorseRacingStore();
+  const { isGenerating, isRacing, isPaused } = storeToRefs(store);
 
-  interface GameControlsEmits {
-    (event: "generate-game"): void;
-    (event: "toggle-race"): void;
-    (event: "reset-game"): void;
-  }
+  const hasHorses = computed(() => store.horses.length > 0);
+  const hasSchedule = computed(() => !!store.schedule?.races.length);
 
-  const props = defineProps<GameControlsProps>();
+  const generateGame = async () => {
+    store.generateHorses();
+    await store.generateRaceSchedule();
+  };
+  const toggleRace = () => {
+    store.toggleRacing();
+  };
 
-  defineEmits<GameControlsEmits>();
+  const resetGame = () => {
+    store.resetGame();
+  };
 </script>

@@ -89,33 +89,55 @@ export const useHorseRacingStore = defineStore("horseRacing", {
     },
 
     async startRacing() {
-      if (!this.schedule) return;
+      // Guard clause
+      if (
+        !this.schedule ||
+        !this.schedule.races ||
+        this.schedule.races.length === 0
+      ) {
+        return;
+      }
+      if (this.isRacing) {
+        return;
+      }
 
       this.isRacing = true;
       this.isPaused = false;
       this.schedule.status = ScheduleStatus.RUNNING;
 
-      for (
-        let raceIndex = 0;
-        raceIndex < this.schedule.races.length;
-        raceIndex++
-      ) {
-        this.schedule.currentRaceIndex = raceIndex;
-        await this.runSingleRace(this.schedule.races[raceIndex]);
+      try {
+        for (
+          let raceIndex = 0;
+          raceIndex < this.schedule.races.length;
+          raceIndex++
+        ) {
+          if (!this.schedule || !this.schedule.races) {
+            break;
+          }
 
-        if (this.isPaused) {
-          break;
+          this.schedule.currentRaceIndex = raceIndex;
+          await this.runSingleRace(this.schedule.races[raceIndex]);
+
+          if (this.isPaused || !this.schedule) {
+            break;
+          }
         }
-      }
 
-      if (!this.isPaused) {
-        this.schedule.status = ScheduleStatus.FINISHED;
+        if (this.schedule && !this.isPaused) {
+          this.schedule.status = ScheduleStatus.FINISHED;
+        }
+      } catch (error) {
+        console.error("Error during racing:", error);
+      } finally {
+        this.isRacing = false;
       }
-      this.isRacing = false;
     },
 
     toggleRacing() {
       if (!this.isRacing) {
+        if (!this.schedule) {
+          return;
+        }
         this.startRacing();
       } else {
         this.isPaused = !this.isPaused;
@@ -135,6 +157,11 @@ export const useHorseRacingStore = defineStore("horseRacing", {
     },
 
     async runSingleRace(race: Race) {
+      // Race validation
+      if (!race || !race.horses || race.horses.length === 0) {
+        return;
+      }
+
       race.status = RaceStatus.RUNNING;
 
       race.horses.forEach((horse) => {
@@ -142,7 +169,6 @@ export const useHorseRacingStore = defineStore("horseRacing", {
       });
 
       const updateInterval = RACE_ANIMATION.UPDATE_INTERVAL;
-
       const raceResults: RaceResult[] = [];
       const horsePerformance: Map<
         number,
@@ -191,9 +217,16 @@ export const useHorseRacingStore = defineStore("horseRacing", {
             startTime = currentTime;
           }
 
+          if (!this.schedule) {
+            if (animationId) {
+              cancelAnimationFrame(animationId);
+            }
+            resolve();
+            return;
+          }
+
           if (this.isPaused) {
             race.status = RaceStatus.PAUSED;
-
             // Record when pause started
             if (pauseStartTime === null) {
               pauseStartTime = currentTime;
@@ -205,10 +238,14 @@ export const useHorseRacingStore = defineStore("horseRacing", {
             }
 
             const pauseCheck = (pauseCheckTime: number) => {
+              if (!this.schedule) {
+                resolve();
+                return;
+              }
+
               if (!this.isPaused) {
                 race.status = RaceStatus.RUNNING;
 
-                // Calculate pause duration and add to total
                 if (pauseStartTime !== null) {
                   pausedTime += pauseCheckTime - pauseStartTime;
                   pauseStartTime = null;
@@ -223,21 +260,18 @@ export const useHorseRacingStore = defineStore("horseRacing", {
             return;
           }
 
-          // Throttle updates to maintain consistent timing
+          // Throttle updates
           if (currentTime - lastUpdateTime >= updateInterval) {
-            // Subtract paused time from elapsed time calculation
-            const elapsedTime = (currentTime - startTime - pausedTime) / 1000; // seconds
+            const elapsedTime = (currentTime - startTime - pausedTime) / 1000;
 
             race.horses.forEach((horse) => {
               const performance = horsePerformance.get(horse.id);
               if (performance) {
                 const expectedPosition = performance.speed * elapsedTime;
-
                 const currentPosition = Math.min(
                   race.distance,
                   Math.floor(expectedPosition),
                 );
-
                 horse.position = Math.max(horse.position || 0, currentPosition);
               }
             });
@@ -279,10 +313,15 @@ export const useHorseRacingStore = defineStore("horseRacing", {
     },
 
     resetGame() {
-      this.schedule = null;
-      this.isRacing = false;
-      this.isPaused = false;
-      this.isGenerating = false;
+      if (this.isRacing) {
+        this.isRacing = false;
+        this.isPaused = false;
+      }
+
+      setTimeout(() => {
+        this.schedule = null;
+        this.isGenerating = false;
+      }, 100);
     },
   },
 });

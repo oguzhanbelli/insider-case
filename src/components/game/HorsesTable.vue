@@ -44,8 +44,8 @@
           <span
             v-if="
               isHorseInCurrentRace(row.id as number) &&
-                store.isRacing &&
-                store.currentRace?.status !== RaceStatus.FINISHED
+                isRacing &&
+                currentRace?.status !== RaceStatus.FINISHED
             "
             class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-500/20 text-yellow-600 dark:text-yellow-200 border border-yellow-400/30"
           >
@@ -66,20 +66,13 @@
 <script setup lang="ts">
   import { computed } from "vue";
   import BaseTable from "@/components/ui/BaseTable.vue";
-  import type { Horse, Race } from "@/types/horse-racing";
+
   import type { TableColumn } from "@/types/ui";
   import { useHorseRacingStore } from "@/stores/horse-racing";
   import { RaceStatus } from "@/types/enums";
+  import { storeToRefs } from "pinia";
 
-  interface HorseStableProps {
-    horses: Horse[];
-    isRacing: boolean;
-    currentRace: Race | null;
-    completedRaces: Race[];
-  }
-
-  const props = defineProps<HorseStableProps>();
-  const store = useHorseRacingStore();
+  const { horses, currentRace, isRacing } = storeToRefs(useHorseRacingStore());
 
   const columns: TableColumn[] = [
     { key: "id", title: "#", align: "left" },
@@ -89,12 +82,12 @@
   ];
 
   const tableData = computed(() => {
-    return props.horses.map((horse) => ({
+    return horses.value.map((horse) => ({
       ...horse,
       _class: [
         isHorseInCurrentRace(horse.id) &&
-          store.isRacing &&
-          store.currentRace?.status !== RaceStatus.FINISHED
+          isRacing &&
+          currentRace.value!.status !== RaceStatus.FINISHED
           ? "bg-yellow-500/20 border-yellow-400/30"
           : "",
       ]
@@ -105,7 +98,7 @@
 
   const isHorseInCurrentRace = (horseId: number) => {
     return (
-      props.currentRace?.horses.some((horse) => horse.id === horseId) || false
+      currentRace.value?.horses.some((horse) => horse.id === horseId) || false
     );
   };
 </script>

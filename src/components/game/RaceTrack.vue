@@ -4,14 +4,14 @@
   >
     <div class="text-center mb-6">
       <h3 class="text-2xl font-bold text-heading mb-2">
-        Round {{ props.race.round }} - {{ props.race.distance }}m
+        Round {{ race!.round }} - {{ race!.distance }}m
       </h3>
       <div class="flex justify-center items-center space-x-4">
         <div class="bg-background-soft px-4 py-2 rounded-full">
-          <span class="text-primary">Status: {{ props.race.status }}</span>
+          <span class="text-primary">Status: {{ race!.status }}</span>
         </div>
         <div
-          v-if="props.race.status === 'running'"
+          v-if="race!.status === RaceStatus.RUNNING"
           class="bg-red-500 w-3 h-3 rounded-full animate-pulse"
         />
       </div>
@@ -36,15 +36,15 @@
         class="absolute top-2 left-0 right-0 flex justify-between px-4 text-xs text-gray-600 dark:text-gray-700"
       >
         <span>0m</span>
-        <span>{{ Math.floor(props.race.distance / 4) }}m</span>
-        <span>{{ Math.floor(props.race.distance / 2) }}m</span>
-        <span>{{ Math.floor((props.race.distance * 3) / 4) }}m</span>
-        <span>{{ props.race.distance }}m</span>
+        <span>{{ Math.floor(race!.distance / 4) }}m</span>
+        <span>{{ Math.floor(race!.distance / 2) }}m</span>
+        <span>{{ Math.floor((race!.distance * 3) / 4) }}m</span>
+        <span>{{ race!.distance }}m</span>
       </div>
 
       <div class="pt-8 space-y-2">
         <div
-          v-for="(horse, index) in props.race.horses"
+          v-for="(horse, index) in race!.horses"
           :key="horse.id"
           class="relative h-10 bg-white/40 dark:bg-white/60 rounded border border-gray-300 dark:border-gray-400 shadow-sm"
         >
@@ -65,10 +65,10 @@
                 class="relative"
                 :class="{
                   'horse-running':
-                    (props.race.status === RaceStatus.RUNNING ||
-                      props.race.status !== RaceStatus.PAUSED) &&
+                    (race!.status === RaceStatus.RUNNING ||
+                      race!.status !== RaceStatus.PAUSED) &&
                     horse.position !== undefined &&
-                    horse.position < props.race.distance,
+                    horse.position < race!.distance,
                 }"
               >
                 <HorseIcon
@@ -101,21 +101,19 @@
 </template>
 
 <script setup lang="ts">
-  import type { Race, Horse } from "@/types/horse-racing";
+  import type { Horse } from "@/types/horse-racing";
   import HorseIcon from "@/assets/icons/horse.svg";
   import { RaceStatus } from "@/types/enums";
+  import { useHorseRacingStore } from "@/stores/horse-racing";
+  import { storeToRefs } from "pinia";
 
-  interface RaceTrackProps {
-    race: Race;
-  }
-
-  const props = defineProps<RaceTrackProps>();
+  const { currentRace: race } = storeToRefs(useHorseRacingStore());
 
   const calculateHorsePosition = (horse: Horse): number => {
     if (!horse.position) return 4;
 
     const progressPercentage = Math.min(
-      horse.position / props.race.distance,
+      horse.position / race!.value!.distance,
       1,
     );
 
@@ -135,11 +133,11 @@
   const getDisplayPosition = (horse: Horse): number => {
     if (!horse.position) return 0;
 
-    if (props.race.status === RaceStatus.FINISHED) {
-      return props.race.distance;
+    if (race!.value!.status === RaceStatus.FINISHED) {
+      return race.value!.distance;
     }
 
-    const currentPos = Math.min(horse.position, props.race.distance);
+    const currentPos = Math.min(horse.position, race!.value!.distance);
     return Math.round(currentPos / 10) * 10;
   };
 </script>

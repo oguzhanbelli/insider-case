@@ -24,20 +24,17 @@
   import BaseTabs from "@/components/ui/BaseTabs.vue";
   import RaceProgram from "@/components/game/RaceProgram.vue";
   import RaceResultsTab from "@/components/game/RaceResultsTab.vue";
-  import type { RaceSchedule, Race } from "@/types/horse-racing";
   import type { TabItem } from "@/types/ui";
   import {
     ClipboardDocumentListIcon,
     TrophyIcon,
   } from "@heroicons/vue/24/outline";
+  import { useHorseRacingStore } from "@/stores/horse-racing";
+  import { storeToRefs } from "pinia";
 
-  interface ProgramAndResultsProps {
-    schedule: RaceSchedule | null;
-    isRacing: boolean;
-    completedRaces: Race[];
-  }
-
-  defineProps<ProgramAndResultsProps>();
+  const { schedule, completedRaces, isRacing } = storeToRefs(
+    useHorseRacingStore(),
+  );
 
   const activeTab = ref<"program" | "results">("program");
 

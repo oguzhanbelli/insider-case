@@ -3,30 +3,16 @@
     class="bg-background font-poppins w-full min-h-screen p-6 transition-colors duration-300"
   >
     <div class="max-w-7xl mx-auto">
-      <GameHeader
-        :is-generating="store.isGenerating"
-        :is-racing="store.isRacing"
-        :is-paused="store.isPaused"
-        :has-horses="store.horses.length > 0"
-        :has-schedule="!!store.schedule"
-        @generate-game="generateGame"
-        @toggle-race="toggleRace"
-        @reset-game="resetGame"
-      />
+      <GameHeader />
 
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-3">
-          <HorsesTable
-            :horses="store.horses"
-            :is-racing="store.isRacing"
-            :current-race="store.currentRace"
-            :completed-races="store.completedRaces"
-          />
+          <HorsesTable />
         </div>
 
         <div class="lg:col-span-6">
           <div v-if="store.currentRace" class="mb-4">
-            <RaceTrack :race="store.currentRace" />
+            <RaceTrack />
           </div>
           <div
             v-else
@@ -43,11 +29,7 @@
         </div>
 
         <div class="lg:col-span-3">
-          <ProgramAndResults
-            :schedule="store.schedule"
-            :is-racing="store.isRacing"
-            :completed-races="store.completedRaces"
-          />
+          <ProgramAndResults />
         </div>
       </div>
     </div>
@@ -64,19 +46,6 @@
   import { FlagIcon } from "@heroicons/vue/24/outline";
 
   const store = useHorseRacingStore();
-
-  const generateGame = async () => {
-    store.generateHorses();
-    await store.generateRaceSchedule();
-  };
-
-  const toggleRace = () => {
-    store.toggleRacing();
-  };
-
-  const resetGame = () => {
-    store.resetGame();
-  };
 
   onMounted(() => {
     if (store.horses.length === 0) {
