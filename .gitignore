@@ -12,6 +12,11 @@ dist
 dist-ssr
 *.local
 
+# Reports and coverage
+eslint-report.html
+coverage/
+.nyc_output/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
