@@ -5,11 +5,14 @@
         variant="primary"
         size="md"
         :loading="props.isGenerating"
-        :disabled="props.isRacing || (props.isPaused)"
+        :disabled="props.isRacing || props.isPaused"
         @click="$emit('generate-game')"
       >
         <span class="flex items-center space-x-2">
-          <span>{{ props.hasHorses && props.hasSchedule ? "Regenerate" : "Generate" }} Program</span>
+          <span>{{
+            props.hasHorses && props.hasSchedule ? "Regenerate" : "Generate"
+          }}
+            Program</span>
         </span>
       </BaseButton>
 

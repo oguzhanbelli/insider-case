@@ -64,7 +64,11 @@
               <div
                 class="relative"
                 :class="{
-                  'horse-running': (props.race.status === RaceStatus.RUNNING || props.race.status !== RaceStatus.PAUSED) && horse.position !== undefined && horse.position < props.race.distance,
+                  'horse-running':
+                    (props.race.status === RaceStatus.RUNNING ||
+                      props.race.status !== RaceStatus.PAUSED) &&
+                    horse.position !== undefined &&
+                    horse.position < props.race.distance,
                 }"
               >
                 <HorseIcon
@@ -128,7 +132,6 @@
     );
   };
 
-  
   const getDisplayPosition = (horse: Horse): number => {
     if (!horse.position) return 0;
 

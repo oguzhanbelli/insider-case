@@ -57,7 +57,6 @@
 <script setup lang="ts">
   import { onMounted } from "vue";
   import { useHorseRacingStore } from "@/stores/horse-racing";
-  import { useThemeStore } from "@/stores/theme";
   import GameHeader from "@/components/game/GameHeader.vue";
   import RaceTrack from "@/components/game/RaceTrack.vue";
   import HorsesTable from "@/components/game/HorsesTable.vue";
@@ -65,7 +64,6 @@
   import { FlagIcon } from "@heroicons/vue/24/outline";
 
   const store = useHorseRacingStore();
-  const themeStore = useThemeStore();
 
   const generateGame = async () => {
     store.generateHorses();
@@ -81,7 +79,6 @@
   };
 
   onMounted(() => {
-    themeStore.initTheme();
     if (store.horses.length === 0) {
       store.generateHorses();
     }

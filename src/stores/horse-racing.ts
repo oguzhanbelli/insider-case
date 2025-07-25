@@ -193,12 +193,12 @@ export const useHorseRacingStore = defineStore("horseRacing", {
 
           if (this.isPaused) {
             race.status = RaceStatus.PAUSED;
-            
+
             // Record when pause started
             if (pauseStartTime === null) {
               pauseStartTime = currentTime;
             }
-            
+
             if (animationId) {
               cancelAnimationFrame(animationId);
               animationId = null;
@@ -207,13 +207,13 @@ export const useHorseRacingStore = defineStore("horseRacing", {
             const pauseCheck = (pauseCheckTime: number) => {
               if (!this.isPaused) {
                 race.status = RaceStatus.RUNNING;
-                
+
                 // Calculate pause duration and add to total
                 if (pauseStartTime !== null) {
                   pausedTime += pauseCheckTime - pauseStartTime;
                   pauseStartTime = null;
                 }
-                
+
                 animationId = requestAnimationFrame(runAnimation);
               } else {
                 requestAnimationFrame(pauseCheck);
@@ -251,8 +251,10 @@ export const useHorseRacingStore = defineStore("horseRacing", {
           );
 
           // Adjust safety timeout to account for paused time
-          const adjustedElapsedTime = (currentTime - startTime - pausedTime) / 1000;
-          const safetyTimeout = startTime && adjustedElapsedTime >= maxExpectedTime + 1;
+          const adjustedElapsedTime =
+            (currentTime - startTime - pausedTime) / 1000;
+          const safetyTimeout =
+            startTime && adjustedElapsedTime >= maxExpectedTime + 1;
 
           if (allHorsesFinished || safetyTimeout) {
             if (animationId) {
