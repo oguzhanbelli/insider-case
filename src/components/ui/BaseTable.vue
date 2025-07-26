@@ -6,14 +6,13 @@
           <th
             v-for="column in columns"
             :key="column.key"
-            :class="cn(
-              'py-2 px-3 font-semibold',
-              {
+            :class="
+              cn('py-2 px-3 font-semibold', {
                 'text-center': column.align === 'center',
                 'text-right': column.align === 'right',
                 'text-left': !column.align || column.align === 'left',
-              }
-            )"
+              })
+            "
           >
             {{ column.title }}
           </th>
@@ -23,22 +22,23 @@
         <tr
           v-for="(row, index) in data"
           :key="index"
-          :class="cn(
-            'border-b border-primary hover:bg-surface-hover transition-colors',
-            row._class
-          )"
+          :class="
+            cn(
+              'border-b border-primary hover:bg-surface-hover transition-colors',
+              row._class,
+            )
+          "
         >
           <td
             v-for="column in columns"
             :key="column.key"
-            :class="cn(
-              'py-2 px-3',
-              {
+            :class="
+              cn('py-2 px-3', {
                 'text-center': column.align === 'center',
                 'text-right': column.align === 'right',
                 'text-left': !column.align || column.align === 'left',
-              }
-            )"
+              })
+            "
           >
             <slot
               :name="`cell(${column.key})`"

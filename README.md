@@ -30,6 +30,134 @@ A Vue 3 horse racing simulation game built with Vite, TypeScript, and Tailwind C
 - **ESLint** - Code linting
 - **Prettier** - Code formatting
 
+## Docker Support
+
+This project includes Docker support for containerized deployment with multi-stage builds and optimized production configuration.
+
+### Docker Features
+
+- **Multi-stage build** - Separate build and production stages for optimized image size
+- **Nginx serving** - Production-ready web server configuration
+- **Alpine Linux** - Lightweight base images for security and performance
+- **Gzip compression** - Optimized asset delivery
+- **SPA routing** - Configured for Vue Router client-side routing
+
+### Quick Start with Docker
+
+```bash
+# Using Docker directly
+docker build -t horse-racing-game .
+docker run -p 8080:80 horse-racing-game
+
+# Using Docker Compose (recommended)
+docker-compose up --build
+```
+
+The application will be available at `http://localhost:8080`
+
+### Docker Commands
+
+#### Using Docker Directly
+
+```bash
+# Build the Docker image
+docker build -t horse-racing-game .
+
+# Run the container
+docker run -p 8080:80 horse-racing-game
+
+# Run in detached mode
+docker run -d -p 8080:80 --name horse-racing horse-racing-game
+
+# Stop the container
+docker stop horse-racing
+
+# Remove the container
+docker rm horse-racing
+
+# Remove the image
+docker rmi horse-racing-game
+```
+
+#### Using Docker Compose
+
+```bash
+# Start production container
+docker-compose up
+
+# Start production container in background
+docker-compose up -d
+
+# Start development container with hot reload
+docker-compose --profile dev up
+
+# Build and start
+docker-compose up --build
+
+# Stop containers
+docker-compose down
+
+# Stop and remove volumes
+docker-compose down -v
+
+# View logs
+docker-compose logs -f
+```
+
+### Development with Docker
+
+```bash
+# Start development server with hot reload
+docker-compose --profile dev up
+
+# Or build development image directly
+docker build -f Dockerfile.dev -t horse-racing-dev .
+docker run -p 5173:5173 -v $(pwd):/app horse-racing-dev
+```
+
+Development server will be available at `http://localhost:5173`
+
+### Using Makefile (Optional)
+
+For convenience, you can use the provided Makefile:
+
+```bash
+# View all available commands
+make help
+
+# Build and run production
+make build
+make run
+
+# Start development
+make dev
+
+# Stop containers
+make stop
+
+# Clean up
+make clean
+
+# View logs
+make logs
+
+# Run tests in container
+make test
+```
+
+### Production Deployment
+
+```bash
+# Build optimized production image
+docker build -t horse-racing-game:latest .
+
+# Run with custom port
+docker run -p 3000:80 horse-racing-game:latest
+
+# Run with environment variables (if needed)
+docker run -p 8080:80 -e NODE_ENV=production horse-racing-game:latest
+```
+
 ## Prerequisites
 
 - Node.js (v16 or higher)
@@ -100,6 +228,8 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
 
 ## Development Workflow
 
+### Local Development
+
 1. **Start development server:**
 
    ```bash
@@ -111,6 +241,23 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
    ```bash
    npm run test:watch
    ```
+
+### Docker Development
+
+1. **Start with Docker Compose:**
+
+   ```bash
+   docker-compose --profile dev up
+   ```
+
+2. **Or start development server manually:**
+
+   ```bash
+   docker build -f Dockerfile.dev -t horse-racing-dev .
+   docker run -p 5173:5173 -v $(pwd):/app horse-racing-dev
+   ```
+
+### Quality Assurance
 
 3. **Before committing, run quality checks:**
 
@@ -124,9 +271,20 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
    npm run test:all-with-e2e
    ```
 
+### Production Build
+
 5. **Build for production:**
+
    ```bash
    npm run build
+   ```
+
+6. **Docker deployment:**
+   ```bash
+   docker-compose up --build
+   # or
+   docker build -t horse-racing-game .
+   docker run -p 8080:80 horse-racing-game
    ```
 
 ## Testing Strategy
@@ -157,13 +315,24 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
 ```
 src/
 ├── components/     # Vue components
-│   └── __tests__/  # Component tests
+│   ├── game/      # Game-specific components
+│   ├── ui/        # Reusable UI components
+│   └── __tests__/ # Component tests
 ├── views/         # Page components
 ├── router/        # Vue Router configuration
 ├── stores/        # Pinia stores
+├── types/         # TypeScript type definitions
+├── utils/         # Utility functions
+├── styles/        # Global styles
 └── assets/        # Static assets
 tests/
 ├── e2e/           # End-to-end tests
+Dockerfile         # Production Docker configuration
+Dockerfile.dev     # Development Docker configuration
+docker-compose.yml # Docker Compose configuration
+Makefile          # Docker convenience commands
+nginx.conf         # Nginx production server config
+.dockerignore      # Docker ignore patterns
 ```
 
 ## Code Quality Standards

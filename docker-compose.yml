@@ -1,0 +1,32 @@
+services:
+  horse-racing-game:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    container_name: horse-racing-game
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+  # Development service with hot reload
+  horse-racing-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      target: development
+    ports:
+      - "5173:5173"
+    container_name: horse-racing-dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    profiles:
+      - dev
+
+networks:
+  default:
+    name: horse-racing-network

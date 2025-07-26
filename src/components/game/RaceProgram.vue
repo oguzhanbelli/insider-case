@@ -13,14 +13,17 @@
       class="bg-surface rounded-lg border border-primary"
     >
       <div
-        :class="cn(
-          'px-4 py-2 rounded-t-lg text-center font-bold text-white text-sm',
-          {
-            'bg-yellow-500/80': index === schedule?.currentRaceIndex && isRacing,
-            'bg-green-500/80': race.status === RaceStatus.FINISHED,
-            'bg-blue-500/80': race.status === RaceStatus.PENDING,
-          }
-        )"
+        :class="
+          cn(
+            'px-4 py-2 rounded-t-lg text-center font-bold text-white text-sm',
+            {
+              'bg-yellow-500/80':
+                index === schedule?.currentRaceIndex && isRacing,
+              'bg-green-500/80': race.status === RaceStatus.FINISHED,
+              'bg-blue-500/80': race.status === RaceStatus.PENDING,
+            },
+          )
+        "
       >
         {{ getOrdinalNumber(race.round) }} Lap - {{ race.distance }}m
       </div>

@@ -12,12 +12,14 @@
         :aria-selected="activeTab === tab.key"
         :aria-controls="`panel-${tab.key}`"
         :tabindex="activeTab === tab.key ? 0 : -1"
-        :class="cn(
-          'flex-1 px-4 py-3 text-primary font-bold text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-inset flex items-center justify-center',
-          activeTab === tab.key
-            ? `${getActiveTabClass(tab.color)} shadow-lg`
-            : 'bg-background-glass hover:bg-surface-hover active:bg-background-mute hover:scale-105 active:scale-95'
-        )"
+        :class="
+          cn(
+            'flex-1 px-4 py-3 text-primary font-bold text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-inset flex items-center justify-center',
+            activeTab === tab.key
+              ? `${getActiveTabClass(tab.color)} shadow-lg`
+              : 'bg-background-glass hover:bg-surface-hover active:bg-background-mute hover:scale-105 active:scale-95',
+          )
+        "
         @click="$emit('update:activeTab', tab.key)"
       >
         <component

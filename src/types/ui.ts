@@ -1,3 +1,5 @@
+import type { Component } from "vue";
+
 export interface TableColumn {
   key: string;
   title: string;
@@ -22,6 +24,6 @@ export interface TableRow {
 export interface TabItem {
   key: string;
   title: string;
-  icon?: string | object;
+  icon?: string | Component;
   color?: string;
 }

@@ -1,13 +1,12 @@
 <template>
   <div
-    :class="cn(
-      'flex items-center justify-center',
-      containerClass,
-      {
-        'bg-background-glass backdrop-blur-md border border-glass': variant === 'glass',
+    :class="
+      cn('flex items-center justify-center', containerClass, {
+        'bg-background-glass backdrop-blur-md border border-glass':
+          variant === 'glass',
         'text-muted text-center': variant === 'simple',
-      }
-    )"
+      })
+    "
   >
     <div class="flex flex-col items-center space-y-4">
       <div :class="cn('flex justify-center', iconContainerClass)">

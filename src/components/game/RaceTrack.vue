@@ -63,13 +63,16 @@
             <div class="flex items-center gap-1">
               <div
                 class="relative"
-                :class="{
-                  'horse-running':
-                    (race!.status === RaceStatus.RUNNING ||
-                      race!.status !== RaceStatus.PAUSED) &&
-                    horse.position !== undefined &&
-                    horse.position < race!.distance,
-                }"
+                :class="
+                  cn({
+                    'horse-running':
+                      (race!.status === RaceStatus.RUNNING ||
+                        (race!.status !== RaceStatus.PENDING &&
+                          race!.status !== RaceStatus.PAUSED)) &&
+                      horse.position &&
+                      horse.position < race!.distance,
+                  })
+                "
               >
                 <HorseIcon
                   class="w-10 h-10 drop-shadow-md"
@@ -106,19 +109,20 @@
   import { RaceStatus } from "@/types/enums";
   import { useHorseRacingStore } from "@/stores/horse-racing";
   import { storeToRefs } from "pinia";
+  import { cn } from "@/utils";
 
   const { currentRace: race } = storeToRefs(useHorseRacingStore());
 
   const calculateHorsePosition = (horse: Horse): number => {
-    if (!horse.position) return 4;
+    if (!horse.position) return 0;
 
     const progressPercentage = Math.min(
       horse.position / race!.value!.distance,
       1,
     );
 
-    const startPosition = 4;
-    const finishPosition = 88;
+    const startPosition = 0;
+    const finishPosition = 96;
     const usableTrackWidth = finishPosition - startPosition;
 
     const calculatedPosition =
