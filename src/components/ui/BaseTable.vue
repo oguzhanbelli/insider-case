@@ -6,14 +6,14 @@
           <th
             v-for="column in columns"
             :key="column.key"
-            :class="[
+            :class="cn(
               'py-2 px-3 font-semibold',
-              column.align === 'center'
-                ? 'text-center'
-                : column.align === 'right'
-                  ? 'text-right'
-                  : 'text-left',
-            ]"
+              {
+                'text-center': column.align === 'center',
+                'text-right': column.align === 'right',
+                'text-left': !column.align || column.align === 'left',
+              }
+            )"
           >
             {{ column.title }}
           </th>
@@ -23,20 +23,22 @@
         <tr
           v-for="(row, index) in data"
           :key="index"
-          class="border-b border-primary hover:bg-surface-hover transition-colors"
-          :class="row._class"
+          :class="cn(
+            'border-b border-primary hover:bg-surface-hover transition-colors',
+            row._class
+          )"
         >
           <td
             v-for="column in columns"
             :key="column.key"
-            :class="[
+            :class="cn(
               'py-2 px-3',
-              column.align === 'center'
-                ? 'text-center'
-                : column.align === 'right'
-                  ? 'text-right'
-                  : 'text-left',
-            ]"
+              {
+                'text-center': column.align === 'center',
+                'text-right': column.align === 'right',
+                'text-left': !column.align || column.align === 'left',
+              }
+            )"
           >
             <slot
               :name="`cell(${column.key})`"
@@ -55,6 +57,8 @@
 
 <script setup lang="ts">
   import type { TableColumn, TableRow } from "@/types/ui";
+  import { cn } from "@/utils";
+
   interface BaseTableProps {
     columns: TableColumn[];
     data: TableRow[];

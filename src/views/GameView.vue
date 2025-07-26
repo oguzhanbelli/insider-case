@@ -16,15 +16,15 @@
           </div>
           <div
             v-else
-            class="bg-background-glass backdrop-blur-md rounded-lg p-6 border border-glass min-h-96 flex items-center justify-center"
+            class="rounded-lg p-6 min-h-96"
           >
-            <div class="flex flex-col items-center space-y-4">
-              <FlagIcon class="w-16 h-16 text-muted" />
-
-              <p class="text-xl">
-                Start a race to see the action!
-              </p>
-            </div>
+            <EmptyState
+              :icon="FlagIcon"
+              message="Start a race to see the action!"
+              variant="glass"
+              container-class="min-h-96"
+              text-class="text-xl text-text-muted"
+            />
           </div>
         </div>
 
@@ -43,6 +43,7 @@
   import RaceTrack from "@/components/game/RaceTrack.vue";
   import HorsesTable from "@/components/game/HorsesTable.vue";
   import ProgramAndResults from "@/components/game/ProgramAndResults.vue";
+  import EmptyState from "@/components/ui/EmptyState.vue";
   import { FlagIcon } from "@heroicons/vue/24/outline";
 
   const store = useHorseRacingStore();

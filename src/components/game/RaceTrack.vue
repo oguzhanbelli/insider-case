@@ -3,7 +3,7 @@
     class="bg-background-glass backdrop-blur-md rounded-lg p-6 border border-glass"
   >
     <div class="text-center mb-6">
-      <h3 class="text-2xl font-bold text-heading mb-2">
+      <h3 class="text-lg md:text-2xl font-bold text-heading mb-2">
         Round {{ race!.round }} - {{ race!.distance }}m
       </h3>
       <div class="flex justify-center items-center space-x-4">
@@ -133,8 +133,8 @@
   const getDisplayPosition = (horse: Horse): number => {
     if (!horse.position) return 0;
 
-    if (race!.value!.status === RaceStatus.FINISHED) {
-      return race.value!.distance;
+    if (race?.value?.status === RaceStatus.FINISHED) {
+      return race.value?.distance;
     }
 
     const currentPos = Math.min(horse.position, race!.value!.distance);

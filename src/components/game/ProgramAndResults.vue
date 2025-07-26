@@ -3,17 +3,17 @@
     <BaseTabs
       :tabs="tabs"
       :active-tab="activeTab"
-      @update:active-tab="activeTab = $event as 'program' | 'results'"
+      @update:active-tab="activeTab = $event as Tab"
     />
 
     <RaceProgram
-      v-if="activeTab === 'program'"
+      v-if="activeTab === Tab.Program"
       :schedule="schedule"
       :is-racing="isRacing"
     />
 
     <RaceResultsTab
-      v-if="activeTab === 'results'"
+      v-if="activeTab === Tab.Results"
       :completed-races="completedRaces"
     />
   </div>
@@ -31,22 +31,23 @@
   } from "@heroicons/vue/24/outline";
   import { useHorseRacingStore } from "@/stores/horse-racing";
   import { storeToRefs } from "pinia";
+  import { Tab } from "@/types/enums";
 
   const { schedule, completedRaces, isRacing } = storeToRefs(
     useHorseRacingStore(),
   );
 
-  const activeTab = ref<"program" | "results">("program");
+  const activeTab = ref<Tab>(Tab.Program);
 
   const tabs: TabItem[] = [
     {
-      key: "program",
+      key: Tab.Program,
       title: "Program",
       icon: ClipboardDocumentListIcon,
       color: "blue",
     },
     {
-      key: "results",
+      key: Tab.Results,
       title: "Results",
       icon: TrophyIcon,
       color: "green",

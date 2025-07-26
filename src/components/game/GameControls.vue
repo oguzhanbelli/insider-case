@@ -1,6 +1,6 @@
 <template>
   <div class="rounded-lg">
-    <div class="flex flex-wrap gap-4 justify-center">
+    <div class="flex flex-wrap gap-2 md:gap-4 justify-center">
       <BaseButton
         variant="primary"
         size="md"

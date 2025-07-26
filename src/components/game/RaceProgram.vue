@@ -1,11 +1,11 @@
 <template>
   <div class="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
-    <div v-if="!schedule" class="text-muted text-center py-8">
-      <div class="flex justify-center mb-4">
-        <ClipboardDocumentListIcon class="w-16 h-16 text-muted" />
-      </div>
-      <p>No program generated yet</p>
-    </div>
+    <EmptyState
+      v-if="!schedule"
+      :icon="ClipboardDocumentListIcon"
+      message="No program generated yet"
+      variant="simple"
+    />
 
     <div
       v-for="(race, index) in schedule?.races"
@@ -13,12 +13,14 @@
       class="bg-surface rounded-lg border border-primary"
     >
       <div
-        class="px-4 py-2 rounded-t-lg text-center font-bold text-white text-sm"
-        :class="{
-          'bg-yellow-500/80': index === schedule?.currentRaceIndex && isRacing,
-          'bg-green-500/80': race.status === RaceStatus.FINISHED,
-          'bg-blue-500/80': race.status === RaceStatus.PENDING,
-        }"
+        :class="cn(
+          'px-4 py-2 rounded-t-lg text-center font-bold text-white text-sm',
+          {
+            'bg-yellow-500/80': index === schedule?.currentRaceIndex && isRacing,
+            'bg-green-500/80': race.status === RaceStatus.FINISHED,
+            'bg-blue-500/80': race.status === RaceStatus.PENDING,
+          }
+        )"
       >
         {{ getOrdinalNumber(race.round) }} Lap - {{ race.distance }}m
       </div>
@@ -67,6 +69,8 @@
   import { RaceStatus } from "@/types/enums";
   import type { RaceSchedule, Race, Horse } from "@/types/horse-racing";
   import { ClipboardDocumentListIcon } from "@heroicons/vue/24/outline";
+  import EmptyState from "@/components/ui/EmptyState.vue";
+  import { cn } from "@/utils";
 
   interface RaceProgramProps {
     schedule: RaceSchedule | null;

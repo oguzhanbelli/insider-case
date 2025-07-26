@@ -10,3 +10,8 @@ export enum ScheduleStatus {
   RUNNING = "running",
   FINISHED = "finished",
 }
+
+export enum Tab {
+  Program = "program",
+  Results = "results",
+}

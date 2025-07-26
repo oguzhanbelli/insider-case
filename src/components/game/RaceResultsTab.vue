@@ -1,11 +1,11 @@
 <template>
   <div class="space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
-    <div v-if="completedRaces.length === 0" class="text-muted text-center py-8">
-      <div class="flex justify-center mb-4">
-        <FlagIcon class="w-16 h-16 text-muted" />
-      </div>
-      <p>No completed races yet</p>
-    </div>
+    <EmptyState
+      v-if="completedRaces.length === 0"
+      :icon="FlagIcon"
+      message="No completed races yet"
+      variant="simple"
+    />
 
     <div
       v-for="race in completedRaces"
@@ -64,6 +64,7 @@
 <script setup lang="ts">
   import type { Race } from "@/types/horse-racing";
   import { FlagIcon } from "@heroicons/vue/24/outline";
+  import EmptyState from "@/components/ui/EmptyState.vue";
 
   interface RaceResultsTabProps {
     completedRaces: Race[];

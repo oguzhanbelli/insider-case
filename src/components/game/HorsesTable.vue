@@ -3,7 +3,7 @@
     class="bg-background-glass backdrop-blur-md rounded-lg p-6 border border-glass"
   >
     <h2
-      class="text-2xl font-bold text-heading mb-4 flex items-center space-x-2"
+      class="text-lg md:text-2xl font-bold text-heading mb-4 flex items-center space-x-2"
     >
       <span>Horse List (1 - {{ horses.length }})</span>
     </h2>
