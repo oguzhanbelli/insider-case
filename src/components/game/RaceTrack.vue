@@ -110,16 +110,16 @@
               </div>
 
               <div
-                class="absolute top-1 z-20"
+                class="absolute top-1 z-20 horse-element"
+                :class="{
+                  'horse-running-state': isHorseActive(horse),
+                  'horse-finished-state':
+                    (horse.position ?? 0) >= race!.distance,
+                  'horse-pending-state': race!.status === RaceStatus.PENDING,
+                }"
                 :style="{
-                  left:
-                    race!.status !== RaceStatus.PENDING
-                      ? `calc(${calculateHorsePosition(horse)}% + 1.5rem)`
-                      : `${calculateHorsePosition(horse)}%`,
-                  transform:
-                    race!.status === RaceStatus.PENDING && !horse.position
-                      ? 'translateX(-56px)'
-                      : 'translateX(-25%)',
+                  left: calculateHorseLeft(horse),
+                  transform: calculateHorseTransform(horse),
                 }"
               >
                 <div
@@ -140,7 +140,7 @@
                     "
                   >
                     <HorseIcon
-                      class="w-10 h-10 drop-shadow-lg transition-all duration-200"
+                      class="w-10 h-10 drop-shadow-lg transition-transform duration-200"
                       :style="{
                         fill: horse.color,
                         transform:
@@ -152,7 +152,7 @@
                     />
                   </div>
                   <div
-                    class="text-xs font-bold text-gray-800 dark:text-gray-900 bg-white/95 dark:bg-white/98 px-2 py-1 rounded-full shadow-md border border-gray-200 dark:border-gray-300 whitespace-nowrap transition-all duration-200"
+                    class="text-xs font-bold text-gray-800 dark:text-gray-900 bg-white/95 dark:bg-white/98 px-2 py-1 rounded-full shadow-md border border-gray-200 dark:border-gray-300 whitespace-nowrap"
                   >
                     {{ horse.name }}
                   </div>
@@ -205,6 +205,23 @@
       Math.min(calculatedPosition, finishPosition),
     );
   };
+  const calculateHorseLeft = (horse: Horse) => {
+    if (race!.value!.status !== RaceStatus.PENDING) {
+      return `calc(${calculateHorsePosition(horse)}% + 1.5rem)`;
+    }
+    return `${calculateHorsePosition(horse)}%`;
+  };
+
+  const calculateHorseTransform = (horse: Horse) => {
+    if (race!.value!.status === RaceStatus.PENDING && !horse.position) {
+      return "translateX(-56px)";
+    }
+    return "translateX(-25%)";
+  };
+
+  const isHorseActive = (horse: Horse) => {
+    return horse.position ?? 0 < race!.value!.distance;
+  };
 
   const getDisplayPosition = (horse: Horse): number => {
     if (!horse.position || !race?.value?.distance) return 0;
@@ -217,3 +234,25 @@
     return Math.round(currentPos / 10) * 10;
   };
 </script>
+
+<style scoped>
+  .horse-element {
+    transition: transform 250ms ease-out;
+  }
+
+  .horse-running-state {
+    transition:
+      left 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+      transform 250ms ease-out;
+  }
+
+  .horse-finished-state {
+    transition:
+      transform 300ms ease-out,
+      opacity 200ms ease-out;
+  }
+
+  .horse-pending-state {
+    transition: transform 200ms ease-out;
+  }
+</style>

@@ -1,6 +1,6 @@
 <template>
   <div
-    class="bg-background font-poppins w-full min-h-screen overflow-y-auto overflow-x-hidden h-screen"
+    class="bg-background h-screen flex flex-col custom-scrollbar font-poppins w-full min-h-screen overflow-y-auto overflow-x-hidden"
   >
     <GameHeader />
     <main class="max-w-8xl mx-auto px-4 p-6">

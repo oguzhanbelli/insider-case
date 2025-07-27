@@ -1,9 +1,9 @@
 <template>
   <div
-    class="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-glass mb-2 md:py-3"
+    class="sticky top-0 z-50 bg-background backdrop-blur-sm border-b border-glass mb-2 px-4 p-6"
   >
     <div
-      class="flex items-center justify-center gap-4 lg:gap-0 flex-wrap md:justify-between md:items-center py-4 px-4"
+      class="flex items-center justify-center gap-4 lg:gap-0 flex-wrap md:justify-between md:items-center"
     >
       <div class="flex items-center space-x-3">
         <h1 class="text-2xl md:text-5xl font-bold text-heading">
