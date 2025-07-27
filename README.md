@@ -187,10 +187,6 @@ npm run test:run     # Run tests once
 npm run test:watch   # Run tests in watch mode
 npm run test:coverage        # Run tests with coverage report
 npm run test:ci             # Run tests for CI with verbose output and coverage
-npm run test:components     # Run component tests only
-npm run test:components:watch # Watch component tests
-npm run test:ui-components  # Run UI component tests
-npm run test:stores         # Run store tests only
 npm run test:all           # Run all tests, auto-fix code issues, and type-check
 ```
 
@@ -294,7 +290,6 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
 - **Framework:** Vitest with JSDOM environment
 - **Coverage:** V8 coverage reports
 - **Components:** Vue Test Utils for component testing
-- **Stores:** Pinia store testing
 
 ### End-to-End Testing
 
@@ -304,8 +299,6 @@ npm run fix-all      # Auto-fix all code quality issues (lint + format)
 
 ### Testing Commands Overview
 
-- Use `npm run test:components` for focused component testing
-- Use `npm run test:stores` for store logic testing
 - Use `npm run test:e2e` for full application flow testing
 - Use `npm run test:all` for unit tests with automatic code formatting and linting fixes
 - Use `npm run test:all-with-e2e` for complete test suite including E2E tests
