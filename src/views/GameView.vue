@@ -13,12 +13,12 @@
           <div v-if="store.currentRace" class="mb-4">
             <RaceTrack />
           </div>
-          <div v-else class="rounded-lg p-6 min-h-96">
+          <div v-else class="h-full">
             <EmptyState
               :icon="FlagIcon"
               message="Start a race to see the action!"
               variant="glass"
-              container-class="min-h-96"
+              container-class="rounded-lg p-6 min-h-96 h-full"
               text-class="text-xl text-text-muted"
             />
           </div>

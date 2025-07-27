@@ -38,7 +38,7 @@
 <script setup lang="ts">
   import { computed } from "vue";
   import type { Race, Horse, RaceResult } from "@/types/horse-racing";
-  import type { TableColumn, TableRow } from "@/types/ui";
+  import type { TableColumn } from "@/types/ui";
   import { RaceStatus } from "@/types/enums";
   import BaseTable from "@/components/ui/BaseTable.vue";
   import { cn } from "@/utils";
@@ -88,7 +88,7 @@
     return baseColumns;
   });
 
-  const tableData = computed((): TableRow[] => {
+  const tableData = computed(() => {
     if (props.variant === "results" && props.race.results) {
       return [...props.race.results]
         .sort((a, b) => a.position - b.position)

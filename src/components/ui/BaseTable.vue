@@ -25,7 +25,7 @@
           :class="
             cn(
               'border-b border-primary hover:bg-surface-hover transition-colors',
-              row._class,
+              row._class ?? row._class,
             )
           "
         >
@@ -55,13 +55,13 @@
   </div>
 </template>
 
-<script setup lang="ts">
-  import type { TableColumn, TableRow } from "@/types/ui";
+<script setup lang="ts" generic="T extends Record<string, unknown>">
+  import type { TableColumn } from "@/types/ui";
   import { cn } from "@/utils";
 
   interface BaseTableProps {
     columns: TableColumn[];
-    data: TableRow[];
+    data: T[];
   }
 
   defineProps<BaseTableProps>();
