@@ -29,7 +29,7 @@
       </div>
 
       <div
-        class="absolute top-2 left-10 right-4 text-xs text-gray-600 dark:text-gray-700"
+        class="absolute top-2 left-17 right-5 text-xs text-gray-600 dark:text-gray-700"
       >
         <span
           v-for="mark in [
