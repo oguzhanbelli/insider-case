@@ -17,7 +17,7 @@ export const RACE_ANIMATION = {
   },
   RANDOM_FACTOR: {
     MIN: 0.4,
-    MAX: 1.3,
+    MAX: 1.8,
   },
 } as const;
 

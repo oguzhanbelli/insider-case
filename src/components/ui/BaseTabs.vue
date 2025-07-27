@@ -14,13 +14,13 @@
         :tabindex="activeTab === tab.key ? 0 : -1"
         :class="
           cn(
-            'flex-1 px-4 py-3 text-primary font-bold text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:ring-inset flex items-center justify-center',
+            'flex-1 px-4 py-3 text-primary font-bold text-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-inset flex items-center justify-center',
             activeTab === tab.key
               ? `${getActiveTabClass(tab.color)} shadow-lg`
               : 'bg-background-glass hover:bg-surface-hover active:bg-background-mute hover:scale-105 active:scale-95',
           )
         "
-        @click="$emit('update:activeTab', tab.key)"
+        @click="emit('update:activeTab', tab.key)"
       >
         <component
           :is="tab.icon"
@@ -48,20 +48,20 @@
   }
 
   defineProps<BaseTabsProps>();
-  defineEmits<BaseTabsEmits>();
+  const emit = defineEmits<BaseTabsEmits>();
 
   const getActiveTabClass = (color?: string): string => {
     switch (color) {
     case "green":
-      return "bg-green-500/80 hover:bg-green-500/90";
+      return "bg-green-500/80 hover:bg-green-500/90 focus:ring-green-500/50";
     case "blue":
-      return "bg-blue-500/80 hover:bg-blue-500/50 ";
+      return "bg-blue-500/80 hover:bg-blue-500/50 focus:ring-blue-500/50";
     case "yellow":
-      return "bg-yellow-500/80 hover:bg-yellow-500/90";
+      return "bg-yellow-500/80 hover:bg-yellow-500/90 focus:ring-yellow-500/50";
     case "red":
-      return "bg-red-500/80 hover:bg-red-500/90";
+      return "bg-red-500/80 hover:bg-red-500/90 focus:ring-red-500/50";
     default:
-      return "bg-blue-500/80 hover:bg-blue-500/90";
+      return "bg-blue-500/80 hover:bg-blue-500/90 focus:ring-blue-500/50";
     }
   };
 </script>

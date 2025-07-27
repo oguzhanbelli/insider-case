@@ -35,12 +35,14 @@
   const activeTab = ref<Tab>(Tab.Program);
 
   const componentsMap = {
-    [Tab.Program]: defineAsyncComponent(
-      () => import("../game/RaceProgram.vue"),
-    ),
-    [Tab.Results]: defineAsyncComponent(
-      () => import("../game/RaceResultsTab.vue"),
-    ),
+    [Tab.Program]: defineAsyncComponent({
+      loader: () => import("../game/RaceProgram.vue"),
+      delay: 200,
+    }),
+    [Tab.Results]: defineAsyncComponent({
+      loader: () => import("../game/RaceResultsTab.vue"),
+      delay: 200,
+    }),
   };
 
   const selectedTab = computed(() => {
