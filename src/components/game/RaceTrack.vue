@@ -114,15 +114,18 @@
                 :style="{
                   left:
                     race!.status !== RaceStatus.PENDING
-                      ? `calc(${calculateHorsePosition(horse)}% + 3rem)`
+                      ? `calc(${calculateHorsePosition(horse)}% + 1.5rem)`
                       : `${calculateHorsePosition(horse)}%`,
                   transform:
                     race!.status === RaceStatus.PENDING && !horse.position
                       ? 'translateX(-56px)'
-                      : 'translateX(-50%)',
+                      : 'translateX(-25%)',
                 }"
               >
-                <div class="flex items-center gap-2">
+                <div
+                  class="flex items-center gap-2"
+                  :class="{ hidden: horse.position == race!.distance }"
+                >
                   <div
                     class="relative"
                     :class="
@@ -149,7 +152,7 @@
                     />
                   </div>
                   <div
-                    class="text-xs font-bold text-gray-800 dark:text-gray-900 bg-white/95 dark:bg-white/98 px-2 py-1 rounded-full shadow-md border border-gray-200 dark:border-gray-300"
+                    class="text-xs font-bold text-gray-800 dark:text-gray-900 bg-white/95 dark:bg-white/98 px-2 py-1 rounded-full shadow-md border border-gray-200 dark:border-gray-300 whitespace-nowrap transition-all duration-200"
                   >
                     {{ horse.name }}
                   </div>

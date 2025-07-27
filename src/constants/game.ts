@@ -8,16 +8,16 @@ export const GAME_CONFIG = {
 export const RACE_DISTANCES = [1200, 1400, 1600, 1800, 2000, 2200] as const;
 
 export const RACE_ANIMATION = {
-  DURATION: 5000, // 5 seconds
-  UPDATE_INTERVAL: 50, // Update every 50ms
-  SPEED_BASE: 90, // Base speed factor
+  DURATION: 3000, // 3 seconds
+  UPDATE_INTERVAL: 100, // Update every 100ms
+  SPEED_BASE: 20, // Base speed factor
   SPEED_VARIATION: {
     MIN: 0.3,
     MAX: 0.4,
   },
   RANDOM_FACTOR: {
-    MIN: 0.8,
-    MAX: 1.2,
+    MIN: 0.4,
+    MAX: 1.3,
   },
 } as const;
 

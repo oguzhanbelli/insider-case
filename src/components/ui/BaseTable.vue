@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-4">
-    <table class="w-full text-primary text-sm">
+    <table class="w-full text-primary text-sm transition-all duration-200">
       <thead class="sticky top-0 bg-background-soft backdrop-blur-sm">
         <tr class="border-b border-primary">
           <th
