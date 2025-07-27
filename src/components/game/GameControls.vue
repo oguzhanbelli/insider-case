@@ -1,52 +1,46 @@
 <template>
-  <div class="rounded-lg">
-    <div class="flex flex-wrap gap-2 md:gap-4 justify-center">
-      <BaseButton
-        variant="primary"
-        size="md"
-        :loading="isGenerating"
-        :disabled="isRacing || isPaused"
-        @click="generateGame"
-      >
-        <span class="flex items-center space-x-2">
-          <span>{{
-            hasHorses && hasSchedule ? "Regenerate" : "Generate"
+  <div class="flex flex-wrap gap-2 md:gap-4 items-center w-full justify-center">
+    <BaseButton
+      variant="primary"
+      size="md"
+      :loading="isGenerating"
+      :disabled="isRacing || isPaused"
+      @click="generateGame"
+    >
+      <span class="flex items-center space-x-2">
+        <span>{{
+          hasHorses && hasSchedule ? "Regenerate" : "Generate"
+        }}
+          Program</span>
+      </span>
+    </BaseButton>
+
+    <BaseButton
+      :variant="isRacing && !isPaused ? 'warning' : 'success'"
+      size="md"
+      :loading="isRacing && !isPaused"
+      :disabled="!hasSchedule || isGenerating"
+      @click="toggleRace"
+    >
+      <span class="flex items-center space-x-2">
+        <span>
+          {{
+            !isRacing ? "Start Racing" : isPaused ? "Resume Race" : "Pause Race"
           }}
-            Program</span>
         </span>
-      </BaseButton>
+      </span>
+    </BaseButton>
 
-      <BaseButton
-        :variant="isRacing && !isPaused ? 'warning' : 'success'"
-        size="md"
-        :loading="isRacing && !isPaused"
-        :disabled="!hasSchedule || isGenerating"
-        @click="toggleRace"
-      >
-        <span class="flex items-center space-x-2">
-          <span>
-            {{
-              !isRacing
-                ? "Start Racing"
-                : isPaused
-                  ? "Resume Race"
-                  : "Pause Race"
-            }}
-          </span>
-        </span>
-      </BaseButton>
-
-      <BaseButton
-        variant="secondary"
-        size="md"
-        :disabled="!hasSchedule"
-        @click="resetGame"
-      >
-        <span class="flex items-center space-x-2">
-          <span>Reset Game</span>
-        </span>
-      </BaseButton>
-    </div>
+    <BaseButton
+      variant="secondary"
+      size="md"
+      :disabled="!hasSchedule"
+      @click="resetGame"
+    >
+      <span class="flex items-center space-x-2">
+        <span>Reset Game</span>
+      </span>
+    </BaseButton>
   </div>
 </template>
 

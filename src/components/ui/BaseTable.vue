@@ -1,5 +1,5 @@
 <template>
-  <div class="max-h-96 overflow-y-auto custom-scrollbar">
+  <div class="flex flex-col space-y-4">
     <table class="w-full text-primary text-sm">
       <thead class="sticky top-0 bg-background-soft backdrop-blur-sm">
         <tr class="border-b border-primary">

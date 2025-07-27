@@ -6,24 +6,19 @@
       @update:active-tab="activeTab = $event as Tab"
     />
 
-    <RaceProgram
-      v-if="activeTab === Tab.Program"
-      :schedule="schedule"
-      :is-racing="isRacing"
-    />
-
-    <RaceResultsTab
-      v-if="activeTab === Tab.Results"
-      :completed-races="completedRaces"
+    <component
+      :is="selectedTab"
+      v-if="selectedTab && dynamicProps"
+      :key="activeTab"
+      v-bind="dynamicProps"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from "vue";
+  import { computed, defineAsyncComponent, ref } from "vue";
   import BaseTabs from "@/components/ui/BaseTabs.vue";
-  import RaceProgram from "@/components/game/RaceProgram.vue";
-  import RaceResultsTab from "@/components/game/RaceResultsTab.vue";
+
   import type { TabItem } from "@/types/ui";
   import {
     ClipboardDocumentListIcon,
@@ -38,6 +33,27 @@
   );
 
   const activeTab = ref<Tab>(Tab.Program);
+
+  const componentsMap = {
+    [Tab.Program]: defineAsyncComponent(
+      () => import("../game/RaceProgram.vue"),
+    ),
+    [Tab.Results]: defineAsyncComponent(
+      () => import("../game/RaceResultsTab.vue"),
+    ),
+  };
+
+  const selectedTab = computed(() => {
+    return componentsMap[activeTab.value as keyof typeof componentsMap];
+  });
+  const dynamicProps = computed(() => {
+    return {
+      schedule: activeTab.value === Tab.Program ? schedule.value : null,
+      isRacing: activeTab.value === Tab.Program ? isRacing.value : false,
+      completedRaces:
+        activeTab.value === Tab.Results ? completedRaces.value : [],
+    };
+  });
 
   const tabs: TabItem[] = [
     {

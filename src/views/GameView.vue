@@ -1,10 +1,9 @@
 <template>
   <div
-    class="bg-background font-poppins w-full min-h-screen p-6 transition-colors duration-300"
+    class="bg-background font-poppins w-full min-h-screen transition-colors duration-300"
   >
-    <div class="max-w-7xl mx-auto">
-      <GameHeader />
-
+    <GameHeader />
+    <main class="max-w-8xl mx-auto px-4 p-6">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <div class="lg:col-span-3">
           <HorsesTable />
@@ -29,7 +28,7 @@
           <ProgramAndResults />
         </div>
       </div>
-    </div>
+    </main>
   </div>
 </template>
 

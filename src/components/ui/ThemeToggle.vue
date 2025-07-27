@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center justify-center w-full md:w-auto space-x-2">
     <button
-      class="flex items-center justify-center w-10 h-10 rounded-full bg-background hover:bg-background-hover transition-colors focus:ring-primary"
+      class="flex items-center justify-center w-10 h-10 rounded-full bg-background hover:bg-background-hover transition-colors focus:ring-primary border border-background-mute"
       :aria-pressed="themeStore.isDark"
       :aria-checked="themeStore.isDark"
       :title="

@@ -150,19 +150,6 @@ describe("BaseTable", () => {
     expect(rows).toHaveLength(0);
   });
 
-  it("has proper scrollable container", () => {
-    const wrapper = mount(BaseTable, {
-      props: {
-        columns: mockColumns,
-        data: mockData,
-      },
-    });
-
-    const container = wrapper.find(".max-h-96.overflow-y-auto");
-    expect(container.exists()).toBe(true);
-    expect(container.classes()).toContain("custom-scrollbar");
-  });
-
   it("has sticky header", () => {
     const wrapper = mount(BaseTable, {
       props: {

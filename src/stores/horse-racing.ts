@@ -1,5 +1,10 @@
 import { defineStore } from "pinia";
-import type { Race, GameState, RaceResult } from "@/types/horse-racing";
+import type {
+  Race,
+  GameState,
+  RaceResult,
+  AnimationState,
+} from "@/types/horse-racing";
 import {
   HORSE_NAMES,
   HORSE_COLORS,
@@ -9,6 +14,7 @@ import {
   HORSE_CONDITION,
 } from "@/constants";
 import { RaceStatus, ScheduleStatus } from "@/types/enums";
+import { shuffleArray, randomBetween, generateMixedColors } from "@/utils";
 
 export const useHorseRacingStore = defineStore("horseRacing", {
   state: (): GameState => ({
@@ -37,18 +43,17 @@ export const useHorseRacingStore = defineStore("horseRacing", {
     generateHorses() {
       const numberOfHorses = GAME_CONFIG.TOTAL_HORSES;
 
-      const shuffledNames = [...HORSE_NAMES].sort(() => Math.random() - 0.5);
-      const shuffledColors = [...HORSE_COLORS].sort(() => Math.random() - 0.5);
+      const shuffledNames = shuffleArray(HORSE_NAMES);
+
+      const horseColors = generateMixedColors(numberOfHorses, HORSE_COLORS);
 
       this.horses = shuffledNames
         .slice(0, numberOfHorses)
         .map((name, index) => ({
           id: index + 1,
           name,
-          color: shuffledColors[index],
-          condition:
-            Math.floor(Math.random() * HORSE_CONDITION.MAX) +
-            HORSE_CONDITION.MIN,
+          color: horseColors[index],
+          condition: randomBetween(HORSE_CONDITION.MIN, HORSE_CONDITION.MAX),
         }));
     },
 
@@ -62,7 +67,7 @@ export const useHorseRacingStore = defineStore("horseRacing", {
       const races: Race[] = [];
 
       for (let i = 0; i < GAME_CONFIG.TOTAL_RACES; i++) {
-        const shuffledHorses = [...this.horses].sort(() => Math.random() - 0.5);
+        const shuffledHorses = shuffleArray(this.horses);
         const selectedHorses = shuffledHorses
           .slice(0, GAME_CONFIG.HORSES_PER_RACE)
           .map((horse) => ({
@@ -200,116 +205,12 @@ export const useHorseRacingStore = defineStore("horseRacing", {
         result.position = index + 1;
       });
 
-      return new Promise<void>((resolve) => {
-        let animationId: number | null = null;
-        let startTime: number | null = null;
-        let lastUpdateTime = 0;
-        let pausedTime = 0; // Track total paused duration
-        let pauseStartTime: number | null = null; // When current pause started
-
-        // Calculate maximum expected race time based on slowest horse
-        const maxExpectedTime = Math.max(
-          ...Array.from(horsePerformance.values()).map((p) => p.finalTime),
-        );
-
-        const runAnimation = (currentTime: number) => {
-          if (startTime === null) {
-            startTime = currentTime;
-          }
-
-          if (!this.schedule) {
-            if (animationId) {
-              cancelAnimationFrame(animationId);
-            }
-            resolve();
-            return;
-          }
-
-          if (this.isPaused) {
-            race.status = RaceStatus.PAUSED;
-            // Record when pause started
-            if (pauseStartTime === null) {
-              pauseStartTime = currentTime;
-            }
-
-            if (animationId) {
-              cancelAnimationFrame(animationId);
-              animationId = null;
-            }
-
-            const pauseCheck = (pauseCheckTime: number) => {
-              if (!this.schedule) {
-                resolve();
-                return;
-              }
-
-              if (!this.isPaused) {
-                race.status = RaceStatus.RUNNING;
-
-                if (pauseStartTime !== null) {
-                  pausedTime += pauseCheckTime - pauseStartTime;
-                  pauseStartTime = null;
-                }
-
-                animationId = requestAnimationFrame(runAnimation);
-              } else {
-                requestAnimationFrame(pauseCheck);
-              }
-            };
-            requestAnimationFrame(pauseCheck);
-            return;
-          }
-
-          // Throttle updates
-          if (currentTime - lastUpdateTime >= updateInterval) {
-            const elapsedTime = (currentTime - startTime - pausedTime) / 1000;
-
-            race.horses.forEach((horse) => {
-              const performance = horsePerformance.get(horse.id);
-              if (performance) {
-                const expectedPosition = performance.speed * elapsedTime;
-                const currentPosition = Math.min(
-                  race.distance,
-                  Math.floor(expectedPosition),
-                );
-                horse.position = Math.max(horse.position || 0, currentPosition);
-              }
-            });
-
-            lastUpdateTime = currentTime;
-          }
-
-          // Only check if all horses have completed the race distance
-          const allHorsesFinished = race.horses.every(
-            (horse) => (horse.position ?? 0) >= race.distance,
-          );
-
-          // Adjust safety timeout to account for paused time
-          const adjustedElapsedTime =
-            (currentTime - startTime - pausedTime) / 1000;
-          const safetyTimeout =
-            startTime && adjustedElapsedTime >= maxExpectedTime + 1;
-
-          if (allHorsesFinished || safetyTimeout) {
-            if (animationId) {
-              cancelAnimationFrame(animationId);
-            }
-
-            // Ensure all horses are at finish line
-            race.horses.forEach((horse) => {
-              horse.position = race.distance;
-            });
-
-            race.results = raceResults;
-            race.status = RaceStatus.FINISHED;
-            resolve();
-          } else {
-            animationId = requestAnimationFrame(runAnimation);
-          }
-        };
-
-        animationId = requestAnimationFrame(runAnimation);
-      });
+      return this.runRaceAnimation(
+        race,
+        horsePerformance,
+        raceResults,
+        updateInterval,
+      );
     },
 
     resetGame() {
@@ -322,6 +223,210 @@ export const useHorseRacingStore = defineStore("horseRacing", {
         this.schedule = null;
         this.isGenerating = false;
       }, 100);
+    },
+
+    runRaceAnimation(
+      race: Race,
+      horsePerformance: Map<number, { speed: number; finalTime: number }>,
+      raceResults: RaceResult[],
+      updateInterval: number,
+    ): Promise<void> {
+      return new Promise<void>((resolve) => {
+        const animationState = this.createAnimationState(horsePerformance);
+
+        const runAnimation = (currentTime: number) => {
+          this.handleAnimationFrame(
+            currentTime,
+            race,
+            horsePerformance,
+            raceResults,
+            updateInterval,
+            animationState,
+            runAnimation,
+            resolve,
+          );
+        };
+
+        animationState.animationId = requestAnimationFrame(runAnimation);
+      });
+    },
+
+    createAnimationState(
+      horsePerformance: Map<number, { speed: number; finalTime: number }>,
+    ): AnimationState {
+      return {
+        animationId: null,
+        startTime: null,
+        lastUpdateTime: 0,
+        pausedTime: 0,
+        pauseStartTime: null,
+        maxExpectedTime: Math.max(
+          ...Array.from(horsePerformance.values()).map((p) => p.finalTime),
+        ),
+      };
+    },
+
+    handleAnimationFrame(
+      currentTime: number,
+      race: Race,
+      horsePerformance: Map<number, { speed: number; finalTime: number }>,
+      raceResults: RaceResult[],
+      updateInterval: number,
+      animationState: AnimationState,
+      runAnimation: (time: number) => void,
+      resolve: () => void,
+    ) {
+      // Initialize start time
+      if (animationState.startTime === null) {
+        animationState.startTime = currentTime;
+      }
+
+      if (!this.schedule) {
+        this.cleanupAnimation(animationState);
+        resolve();
+        return;
+      }
+
+      // Handle pause state
+      if (this.isPaused) {
+        this.handlePauseState(
+          currentTime,
+          race,
+          animationState,
+          runAnimation,
+          resolve,
+        );
+        return;
+      }
+
+      // Update horse positions
+      this.updateHorsePositions(
+        currentTime,
+        race,
+        horsePerformance,
+        updateInterval,
+        animationState,
+      );
+
+      // Check race completion
+      if (this.isRaceComplete(currentTime, race, animationState)) {
+        this.finishRace(race, raceResults, animationState);
+        resolve();
+      } else {
+        animationState.animationId = requestAnimationFrame(runAnimation);
+      }
+    },
+
+    handlePauseState(
+      currentTime: number,
+      race: Race,
+      animationState: AnimationState,
+      runAnimation: (time: number) => void,
+      resolve: () => void,
+    ) {
+      race.status = RaceStatus.PAUSED;
+
+      // Record when pause started
+      if (animationState.pauseStartTime === null) {
+        animationState.pauseStartTime = currentTime;
+      }
+
+      this.cleanupAnimation(animationState);
+
+      const pauseCheck = (pauseCheckTime: number) => {
+        if (!this.schedule) {
+          resolve();
+          return;
+        }
+
+        if (!this.isPaused) {
+          race.status = RaceStatus.RUNNING;
+
+          if (animationState.pauseStartTime !== null) {
+            animationState.pausedTime +=
+              pauseCheckTime - animationState.pauseStartTime;
+            animationState.pauseStartTime = null;
+          }
+
+          animationState.animationId = requestAnimationFrame(runAnimation);
+        } else {
+          requestAnimationFrame(pauseCheck);
+        }
+      };
+      requestAnimationFrame(pauseCheck);
+    },
+
+    updateHorsePositions(
+      currentTime: number,
+      race: Race,
+      horsePerformance: Map<number, { speed: number; finalTime: number }>,
+      updateInterval: number,
+      animationState: AnimationState,
+    ) {
+      // Throttle updates
+      if (currentTime - animationState.lastUpdateTime >= updateInterval) {
+        const startTime = animationState.startTime ?? currentTime;
+        const elapsedTime =
+          (currentTime - startTime - animationState.pausedTime) / 1000;
+
+        race.horses.forEach((horse) => {
+          const performance = horsePerformance.get(horse.id);
+          if (performance) {
+            const expectedPosition = performance.speed * elapsedTime;
+            const currentPosition = Math.min(
+              race.distance,
+              Math.floor(expectedPosition),
+            );
+            horse.position = Math.max(horse.position || 0, currentPosition);
+          }
+        });
+
+        animationState.lastUpdateTime = currentTime;
+      }
+    },
+
+    isRaceComplete(
+      currentTime: number,
+      race: Race,
+      animationState: AnimationState,
+    ): boolean {
+      // Check if all horses finished
+      const allHorsesFinished = race.horses.every(
+        (horse) => (horse.position ?? 0) >= race.distance,
+      );
+
+      // Check safety timeout
+      const startTime = animationState.startTime ?? currentTime;
+      const adjustedElapsedTime =
+        (currentTime - startTime - animationState.pausedTime) / 1000;
+      const safetyTimeout =
+        !!animationState.startTime &&
+        adjustedElapsedTime >= animationState.maxExpectedTime + 1;
+
+      return allHorsesFinished || safetyTimeout;
+    },
+
+    finishRace(
+      race: Race,
+      raceResults: RaceResult[],
+      animationState: AnimationState,
+    ) {
+      this.cleanupAnimation(animationState);
+
+      // Ensure all horses are at finish line
+      race.horses.forEach((horse) => {
+        horse.position = race.distance;
+      });
+
+      race.results = raceResults;
+      race.status = RaceStatus.FINISHED;
+    },
+
+    cleanupAnimation(animationState: AnimationState) {
+      if (animationState.animationId) {
+        cancelAnimationFrame(animationState.animationId);
+        animationState.animationId = null;
+      }
     },
   },
 });

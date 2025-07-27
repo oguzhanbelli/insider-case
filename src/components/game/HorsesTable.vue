@@ -12,7 +12,7 @@
       <p>Click "Generate Game" to populate the horse list</p>
     </div>
 
-    <div v-else>
+    <div v-else class="max-h-96 overflow-y-auto custom-scrollbar">
       <BaseTable :columns="columns" :data="tableData">
         <template #cell(id)="{ row }">
           <div class="flex items-center space-x-2">

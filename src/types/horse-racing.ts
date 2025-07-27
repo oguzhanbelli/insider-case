@@ -23,6 +23,15 @@ export interface RaceResult {
   time: number; // race completion time in seconds
 }
 
+export interface AnimationState {
+  animationId: number | null;
+  startTime: number | null;
+  lastUpdateTime: number;
+  pausedTime: number;
+  pauseStartTime: number | null;
+  maxExpectedTime: number;
+}
+
 export interface RaceSchedule {
   races: Race[];
   currentRaceIndex: number;
