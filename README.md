@@ -7,7 +7,6 @@ A Vue 3 horse racing simulation game built with Vite, TypeScript, and Tailwind C
 - **Real-time Horse Racing Simulation** - Watch horses race in real-time
 - **Race Controls** - Start, pause, and reset races
 - **Multiple Race Rounds** - Progress through different race distances
-- **Interactive Betting System** - Place bets on your favorite horses
 - **Live Position Tracking** - See horse positions update in real-time
 
 ## Race Status Types
